@@ -1,0 +1,14 @@
+ConfigID,Value
+다이스 아이디,다이스 아이디
+String,Int
+Rest,0
+Roll,4
+PowerRoll,6
+Benefit,2
+Nagative,4
+Health,10
+Damage,1
+Defense,1
+SelfDamage,1
+MaxTurn,15
+DeckCount,15
