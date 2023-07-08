@@ -1,5 +1,4 @@
 DiceID,Rank,Mark1,Mark2,Mark3,Mark4,Mark5,Mark6
-다이스 아이디,다이스 등급,문장1 ,문장2,문장3,문장4,문장5,문장6
 Int,Int,Int,Int,Int,Int,Int,Int
 111111,6,1,1,1,1,1,1
 111112,5,1,1,1,1,1,2
