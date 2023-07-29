@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Player01_Deck
+  - Player02_Deck
+  - Dice
   layers:
   - Default
   - TransparentFX

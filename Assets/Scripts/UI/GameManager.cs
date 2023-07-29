@@ -9,8 +9,9 @@ public class GameManager : MonoBehaviour
 
     #region Field
     private int turn = 1;
+    public int P_turn = 0;
     #endregion
-
+    
     #region SerializeField
          #region text
     [SerializeField]
@@ -27,10 +28,6 @@ public class GameManager : MonoBehaviour
     private Text Player01_Vic_txt;
     [SerializeField]
     private Text Player02_Vic_txt;
-    [SerializeField]
-    private Text Victory_txt;
-    [SerializeField]
-    private Text Defeat_text;
     #endregion text
          #region button
     [SerializeField]
@@ -138,18 +135,8 @@ public class GameManager : MonoBehaviour
     #endregion
     void Player02turn()
     {
-        int randomChoice = UnityEngine.Random.Range(0, 2);
-        if (randomChoice == 0)
-        {
-            Player02_Rolling_Button.onClick.Invoke();
+            Player02.Rolling();
             Debug.Log("Player02 : Roll");
-        }
-        else
-        {
-            Player02_Rest_Button.onClick.Invoke();
-            Debug.Log("Player02 : Rest");
-        }
-        StartCoroutine(trunover1());
     }
 
 
@@ -166,6 +153,12 @@ public class GameManager : MonoBehaviour
             Player01.Turn = true;
         }
         StartCoroutine(ButtonControll());
+        P_turn++;
+        if (P_turn == 2)
+        {
+            turn++;
+            P_turn = 0;
+        }
     }
 
     public void GameOver()
@@ -211,6 +204,6 @@ public class GameManager : MonoBehaviour
     IEnumerator trunover1()
     {
         yield return new WaitForSeconds(1.0f);
-        turn++;
+
     }
 }

@@ -12,31 +12,28 @@ enum DiceType
 }
 public class Dice : MonoBehaviour
 {
+    public Sprite diceIcon;
 
     [SerializeField]
     private int IDNUM;
     [SerializeField]
-    private int DiceID;
+    public int DiceID;
     [SerializeField]
     private int Rank;
     [SerializeField]
     public int[] Mark;
     [SerializeField]
-    private Sprite[] Dice_side;
+    private Sprite[] diceside;
     [SerializeField]
     private Transform deck;
 
-    //BoxCollider2D collider2D;
-
     public int dicenum;
     private SpriteRenderer spriteRenderer;
+    private Collider2D collider2D;
 
-    private void Awake()
-    {
-        
-    }
     public void Start()
     {
+        collider2D= GetComponent<Collider2D>();
         List<Dictionary<string, object>> csvData = CSVReader.Read("Dice");
         Mark = new int[6];
         if (transform.parent != null && transform.parent.name == "Player 01_Deck")
@@ -46,9 +43,8 @@ public class Dice : MonoBehaviour
         else if(transform.parent != null && transform.parent.name == "Player 02_Deck")
         {
             deck = GameObject.FindWithTag("Player02_Deck").transform;
-        } 
+        }
         spriteRenderer = GetComponent<SpriteRenderer>();
-        //gameObject.name = csvData[IDNUM+1][0];
         #region CSV Data
         DiceID = (int)csvData[IDNUM]["DiceID"];
         Rank = (int)csvData[IDNUM]["Rank"];
@@ -62,10 +58,9 @@ public class Dice : MonoBehaviour
     }
     public void Roll()
     {
-        //collider2D.isTrigger = false;
         dicenum = Random.Range(0, 6);
-        Sprite Selectsprite = Dice_side[dicenum];
-        spriteRenderer.sprite = Selectsprite;
+        collider2D.isTrigger= false;
+        spriteRenderer.sprite = diceside[Mark[dicenum]-1];
         Effect(dicenum);
         destroy();
         
@@ -75,22 +70,21 @@ public class Dice : MonoBehaviour
         if (Mark[dicenum] == (int)DiceType.Attack)
         {
             GameManager.instance.Damage();
-           // Debug.Log("Attack");
+            Debug.Log("Attack");
         }
         else if (Mark[dicenum] == (int)DiceType.Shield)
         {
             GameManager.instance.Shield_UP();
-            //Debug.Log("Shield UP");
+            Debug.Log("Shield UP");
         }
         else if (Mark[dicenum] == (int)DiceType.Bomb)
         {
             GameManager.instance.SelfDamaged();
-            //Debug.Log("Bomb");
+            Debug.Log("Bomb");
         }
         else if (Mark[dicenum] == (int)DiceType.Reroll)
         {
-            //코루틴으로 다이스가 파괴될때 같이 덱으로 돌려 넣고 다이스 마크를 null로 바꾼다.
-           // Debug.Log("Reroll");
+            Debug.Log("Reroll");
             StartCoroutine(ReRoll());
 
         }
@@ -109,6 +103,7 @@ public class Dice : MonoBehaviour
         spriteRenderer.sprite = null;
         transform.SetParent(deck.transform);
         transform.position = deck.position;
-        //collider2D.isTrigger = true;
+        collider2D.isTrigger = true;
     }
+    public SpriteRenderer GetSpriteRenderer() { return spriteRenderer; }
 }

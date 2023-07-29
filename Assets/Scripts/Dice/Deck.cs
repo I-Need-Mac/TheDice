@@ -13,19 +13,21 @@ public class Deck : MonoBehaviour
     public List<Dice> diceList = new List<Dice>();
     [SerializeField]
     private Transform deck_position;
-    [SerializeField]
-    public  Transform board;
 
     private Dice dice;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
     private void Start()
     {
-        for (int i = 0; i < deck_position.childCount; i++)
-        {
-            Transform diceTransform = deck_position.GetChild(i);
-            dice = diceTransform.GetComponent<Dice>();
-            diceList.Add(dice);
-        }
+        //for (int i = 0; i < deck_position.childCount; i++)
+        //{
+        //    Transform diceTransform = deck_position.GetChild(i);
+        //    dice = diceTransform.GetComponent<Dice>();
+        //    diceList.Add(dice);
+        //}
         //Shuffle();
     }
     private void Shuffle()
