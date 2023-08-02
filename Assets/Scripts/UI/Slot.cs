@@ -13,7 +13,7 @@ public class Slot : MonoBehaviour
     private void Start()
     {
         DiceName.text = dice.transform.name;
-        GetDice();
+        //GetDice();
     }
     public void GetDice()
     {       

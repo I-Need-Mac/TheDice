@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Inventory : MonoBehaviour
 {
@@ -35,14 +34,23 @@ public class Inventory : MonoBehaviour
                 if (slot.dice != null)
                 {
                     deckpanel.AddDice(slot.dice);
-                    slot.dice.transform.SetParent(deckpanel.deck.transform);
-                    slot.dice.GetSpriteRenderer().sprite = null;
-                    Vector3 parentScale = transform.parent.lossyScale;
-                    slot.dice.transform.localScale = new Vector3(
-                        slot.dice.transform.localScale.x / parentScale.x,
-                        slot.dice.transform.localScale.y / parentScale.y,
-                        slot.dice.transform.localScale.z / parentScale.z
-                    );
+                    if(deckpanel.deckdata.diceList.Count<15)
+                    {
+                        deckpanel.deckdata.diceList.Add(slot.dice);
+                    }
+                    
+                   //for (int i=0; i<deckpanel.Slot.Length; i++)
+                   // {
+                        //if (deckpanel.Slot[i].childCount==0)
+                        //{
+                        //    slot.dice.transform.SetParent(deckpanel.Slot[i]);
+                         //   break;
+                        //}
+                   // }
+                   // }
+                    slot.dice.transform.localPosition = Vector3.zero;
+                    
+                    slot.dice.transform.localScale = Vector3.one;
                 }
             }
         }

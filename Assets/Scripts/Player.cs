@@ -1,110 +1,171 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     public int Hp = 15;
     public int Shield = 0;
     public int Damage = 1;
-    public bool Rest;
-    public bool Power;
-    public bool Turn;
-    public int Rolling_Count;
+    
+    private bool Rest;
+    private bool Power;
 
-    [SerializeField]
-    private Deck deck;
+    public bool isRoll=false;
+    public bool isRest=false;
+    public bool isPower=false;
+    public bool ischoice=false;
 
+    private int Rolling_Count;
     private Dice dice;
 
     [SerializeField]
-    public Transform board;
+    private Deck deck;
+    [SerializeField]
+    private Transform board;
+    [SerializeField]
+    private Player OtherPlayer;
+
+    [SerializeField]
+    public Button Rolling_Button;
+    [SerializeField]
+    public Button Power_Button;
+    [SerializeField]
+    public Button Rest_Button;
     private void Start()
     {
+        Rolling_Count = 4;
         DeckEquip();
     }
 
     public void Rolling()
     {
-        if(Power==true)
-        {
-            Debug.Log("지난턴에 파워롤을 했습니다");
-        }
-        if (Turn==true&&Power==false)
-        {
-            if (Rest == true)
-            { 
-                Rolling_Count = 5;
-            }
-            else
-            {
-                Rolling_Count = 4;
-            }
-            if(deck.diceList.Count<=Rolling_Count)
-            {
-                Rolling_Count=deck.diceList.Count;
-            }
-            //레스트api,소켓 통신
-            for (int i = 0; i < Rolling_Count; i++)
-            {
-                    deck.diceList[i].transform.SetParent(board.transform);
-                    deck.diceList[i].transform.localPosition = Vector3.zero;
-                    deck.diceList[i].Roll();
-                    dice = deck.diceList[i];
-                    if (dice.Mark[dice.dicenum] == (int)DiceType.Reroll)
-                    {
-                        deck.diceList.Add(dice);
-                    }
-            }
-            deck.diceList.RemoveRange(0, Rolling_Count);
-            Rest = false;
-            Power = false;
-            GameManager.instance.TurnOver();
-        }
+        DisableAllButtons(false);
+        ischoice = true;
+        isRoll= true;
+        
     }
     public void PowerRoll()
     {
-        Rolling_Count = 5;
-        if (Rest == true)
+        DisableAllButtons(false);
+        ischoice = true;
+        isPower= true;
+    }
+    public void RestTurn()
+    {
+        DisableAllButtons(false);
+        ischoice = true;
+        isRest = true;
+    }
+
+
+    public void PlayerAction()
+    {
+        if(isRoll == true)
         {
-            Rolling_Count = 6;
-        }
-        if (Power==false&&Turn==true)
-        {
-            for (int i = 0; i < Rolling_Count; i++)
+            if (Power == true)
             {
+                Debug.Log("지난턴에 파워롤을 했습니다");
+            }
+            else
+            {
+                if (deck.diceList.Count <= Rolling_Count)
+                {
+                    Rolling_Count = deck.diceList.Count;
+                }
+                for (int i = 0; i < Rolling_Count; i++)
+                {
+                    dice = deck.diceList[i];
+                    Instantiate(dice,board);
+                    //deck.diceList[i].transform.SetParent(board);
+                    //deck.diceList[i].transform.localPosition = Vector3.zero;
+                    deck.diceList[i].Roll();
+                }
+                deck.diceList.RemoveRange(0, Rolling_Count);
+                if (Rest == true)
+                {
+                    Rest = false;
+                    Rolling_Count--;
+                }
+                Power = false;
+            }
+        }
+        if(isPower == true)
+        {
+            ++Rolling_Count;
+            if (Power == false)
+            {
+                for (int i = 0; i < Rolling_Count; i++)
+                {
                     deck.diceList[i].transform.SetParent(board.transform);
                     deck.diceList[i].transform.localPosition = Vector3.zero;
                     deck.diceList[i].Roll();
                     dice = deck.diceList[i];
                     Power = true;
-                if (dice.Mark[dice.dicenum] == (int)DiceType.Reroll)
-                {
-                    deck.diceList.Add(dice);
+                    if (dice.Mark[dice.dicenum] == (int)DiceType.Reroll)
+                    {
+                        deck.diceList.Add(dice);
+                    }
                 }
+                Debug.Log("남은 덱" + deck.diceList.Count);
+                deck.diceList.RemoveRange(0, Rolling_Count);
             }
-            Debug.Log("남은 덱" + deck.diceList.Count);
-            deck.diceList.RemoveRange(0, Rolling_Count);
+            else if (Power == true)
+            {
+                Debug.Log("지난 턴에 파워롤을 이미 했습니다!");
+            }
+            Rolling_Count--;
         }
-        else if(Power==true)
+        if(isRest == true)
         {
-            Debug.Log("지난 턴에 파워롤을 이미 했습니다!");
+            if (Rest == true)
+            {
+                Debug.Log("지난턴에 쉬었습니다");
+            }
+            else if (Rest == false)
+            {
+                Rest = true;
+                Rolling_Count++;
+            }
         }
-        GameManager.instance.TurnOver();
     }
-    public void RestTurn()
+
+    public void Attack()
     {
-        if(Rest==true)
+        if (OtherPlayer.Shield >= 1)
         {
-            Debug.Log("지난턴에 쉬었습니다");
+            OtherPlayer.Shield -= 1;
         }
-        else if(Rest == false)
+        else
         {
-        Rest = true;
-        GameManager.instance.TurnOver();
+            OtherPlayer.Hp -= 1;
         }
     }
+    public void Shield_UP()
+    {
+        Shield += 1;
+    }
+    public void SelfDamaged()
+    {
+        if (Shield >= 1)
+        {
+            Shield -= 1;
+        }
+        else
+        {
+            Hp -= 1;
+        }
+    }
+
+    public void DisableAllButtons(bool isDisable)
+    {
+        Rolling_Button.interactable = isDisable;
+        Power_Button.interactable = isDisable;
+        Rest_Button.interactable = isDisable;
+    }
+
 
     private void DeckEquip()
     {

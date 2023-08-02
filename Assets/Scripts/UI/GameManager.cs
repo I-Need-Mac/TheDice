@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
 
     #region Field
     private int turn = 1;
-    public int P_turn = 0;
     #endregion
     
     #region SerializeField
@@ -29,20 +28,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Text Player02_Vic_txt;
     #endregion text
-         #region button
-    [SerializeField]
-    private Button Player01_Rolling_Button;
-    [SerializeField]
-    private Button Player02_Rolling_Button;
-    [SerializeField]
-    private Button Player01_Rest_Button;
-    [SerializeField]
-    private Button Player02_Rest_Button;
-    [SerializeField]
-    private Button Player01_PowerRoll_Button;
-    [SerializeField]
-    private Button Player02_PowerRoll_Button;
-    #endregion
     [SerializeField]
     private Player Player01;
     [SerializeField]
@@ -60,15 +45,6 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    private void Start()
-    {
-        Player01.Turn = true;
-        Player02.Turn = false;
-        Player02_Rolling_Button.interactable = false;
-        Player02_Rest_Button.interactable = false;
-        Player02_PowerRoll_Button.interactable = false;
-    }
-
     private void Update()
     {
         Turn.text = $"Turn: {turn}";
@@ -76,91 +52,27 @@ public class GameManager : MonoBehaviour
         Player02_HP_txt.text = $"HP: {Player02.Hp}";
         Player01_Shield_txt.text = $"Shield : {Player01.Shield}";
         Player02_Shield_txt.text = $"Shield : {Player02.Shield}";
-        if(Player02.Turn==true)
-        {
-            Player02turn();
-        }
         GameOver();
+        playAction();
     }
-    #region Damaged_Method
-    public void Damage()
-    { 
-        if (Player01.Turn&&!Player02.Turn)
-        {
-            if (Player02.Shield>0)
-            {Player02.Shield -= 1;}
-            else
-            {Player02.Hp -= 1;}
-        }
-        else if(Player02.Turn&&!Player01.Turn)
-        {
-            if (Player01.Shield > 0)
-            {Player01.Shield -= 1;}
-            else
-            {Player01.Hp -= 1;}     
-        }   
-    }
-
-    public void Shield_Damage()
+    public void playAction()
     {
-        if (Player01.Turn && !Player02.Turn)
-        { Player02.Shield -= 1; }
-        else if(Player02.Turn && !Player01.Turn)
-        { Player01.Shield -= 1;}
-    }
-    public void Shield_UP()
-    {
-        if (Player01.Turn && !Player02.Turn)
-        { Player01.Shield += 1;}
-        else if(Player02.Turn && !Player01.Turn)
-        { Player02.Shield += 1;}
-    }
-    public void SelfDamaged()
-    {
-        if (Player01.Turn && !Player02.Turn)
+        if (Player01.ischoice == true && Player02.ischoice == true)
         {
-            if (Player01.Shield > 0)
-            { Player01.Shield -= 1; }
-            else
-            { Player01.Hp -= 1; }  
-        }
-        else if(Player02.Turn && !Player01.Turn)
-        {
-            if (Player02.Shield > 0)
-            { Player02.Shield -= 1; }    
-            else
-            { Player02.Hp -= 1; }   
+            Player01.PlayerAction();
+            Player02.PlayerAction();
+            Player01.DisableAllButtons(true);
+            Player02.DisableAllButtons(true);
+            Player01.ischoice = false;
+            Player02.ischoice = false;
+            Player01.isPower = false;
+            Player02.isPower = false;
+            Player01.isRoll = false;
+            Player02.isRoll = false;
+            Player01.isRest = false;
+            Player02.isRest = false;
         }
     }
-    #endregion
-    void Player02turn()
-    {
-            Player02.Rolling();
-            Debug.Log("Player02 : Roll");
-    }
-
-
-    public void TurnOver()
-    {
-        if (Player01.Turn && !Player02.Turn)
-        {
-            Player01.Turn = false;
-            Player02.Turn = true;
-        }
-        else if (Player02.Turn && !Player01.Turn)
-        {
-            Player02.Turn = false;
-            Player01.Turn = true;
-        }
-        StartCoroutine(ButtonControll());
-        P_turn++;
-        if (P_turn == 2)
-        {
-            turn++;
-            P_turn = 0;
-        }
-    }
-
     public void GameOver()
     {
          if(Player01.Hp<=0||Player02.Hp<=0||turn>=15)
@@ -176,34 +88,5 @@ public class GameManager : MonoBehaviour
                  Player02_Vic_txt.text = "Defeat";
              }
          }
-    }
-
-    IEnumerator ButtonControll()
-    {
-        yield return new WaitForSeconds(1.0f);
-        if (Player01.Turn)
-        {
-            Player01_Rolling_Button.interactable = true;
-            Player02_Rolling_Button.interactable = false;
-            Player01_Rest_Button.interactable = true;
-            Player02_Rest_Button.interactable = false;
-            Player01_PowerRoll_Button.interactable = true;
-            Player02_PowerRoll_Button.interactable = false;
-        }
-        else if(Player02.Turn)
-        {
-            Player01_Rolling_Button.interactable = false;
-            Player02_Rolling_Button.interactable = true;
-            Player01_Rest_Button.interactable = false;
-            Player02_Rest_Button.interactable = true;
-            Player01_PowerRoll_Button.interactable = false;
-            Player02_PowerRoll_Button.interactable = true;
-        }
-    }
-
-    IEnumerator trunover1()
-    {
-        yield return new WaitForSeconds(1.0f);
-
     }
 }

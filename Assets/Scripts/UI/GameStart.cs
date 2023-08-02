@@ -6,7 +6,6 @@ public class GameStart : MonoBehaviour
 {
     public void Gamestart()
     {
-
         SceneManager.LoadScene("GameScene");
     }
 }

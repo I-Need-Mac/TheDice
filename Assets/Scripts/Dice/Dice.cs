@@ -15,7 +15,7 @@ public class Dice : MonoBehaviour
     public Sprite diceIcon;
 
     [SerializeField]
-    private int IDNUM;
+    public int IDNUM;
     [SerializeField]
     public int DiceID;
     [SerializeField]
@@ -27,23 +27,36 @@ public class Dice : MonoBehaviour
     [SerializeField]
     private Transform deck;
 
+    [SerializeField]
+    private Player player;
+
     public int dicenum;
     private SpriteRenderer spriteRenderer;
-    private Collider2D collider2D;
 
     public void Start()
     {
-        collider2D= GetComponent<Collider2D>();
-        List<Dictionary<string, object>> csvData = CSVReader.Read("Dice");
         Mark = new int[6];
-        if (transform.parent != null && transform.parent.name == "Player 01_Deck")
+        List<Dictionary<string, object>> csvData = CSVReader.Read("Dice");
+
+        if (transform.parent != null && transform.parent.name == "Player01_Deck")
         {
-            deck = GameObject.FindWithTag("Player01_Deck").transform;
+            deck = GameObject.Find("Player01_Deck").transform;
+            GameObject playerObject = GameObject.Find("Player01");
+            if (playerObject != null)
+            {
+                player = playerObject.GetComponent<Player>();
+            }
         }
-        else if(transform.parent != null && transform.parent.name == "Player 02_Deck")
+        else if (transform.parent != null && transform.parent.name == "Player02_Deck")
         {
-            deck = GameObject.FindWithTag("Player02_Deck").transform;
+            deck = GameObject.Find("Player02_Deck").transform;
+            GameObject playerObject = GameObject.Find("Player02");
+            if (playerObject != null)
+            {
+                player = playerObject.GetComponent<Player>();
+            }
         }
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         #region CSV Data
         DiceID = (int)csvData[IDNUM]["DiceID"];
@@ -59,51 +72,49 @@ public class Dice : MonoBehaviour
     public void Roll()
     {
         dicenum = Random.Range(0, 6);
-        collider2D.isTrigger= false;
-        spriteRenderer.sprite = diceside[Mark[dicenum]-1];
-        Effect(dicenum);
-        destroy();
-        
+        Debug.Log(diceside[Mark[0]]);
+        //spriteRenderer.sprite = diceside[Mark[0]];
+        //Effect(dicenum);
     }
     void Effect(int dicenum)
     {
         if (Mark[dicenum] == (int)DiceType.Attack)
         {
-            GameManager.instance.Damage();
+            player.Attack();
             Debug.Log("Attack");
         }
         else if (Mark[dicenum] == (int)DiceType.Shield)
         {
-            GameManager.instance.Shield_UP();
+            player.Shield_UP();
             Debug.Log("Shield UP");
         }
         else if (Mark[dicenum] == (int)DiceType.Bomb)
         {
-            GameManager.instance.SelfDamaged();
+            player.SelfDamaged();
             Debug.Log("Bomb");
         }
         else if (Mark[dicenum] == (int)DiceType.Reroll)
         {
             Debug.Log("Reroll");
-            StartCoroutine(ReRoll());
+            //StartCoroutine(ReRoll());
 
         }
     }
-    public void destroy()
-    {
-        if (Mark[dicenum] != (int)DiceType.Reroll)
-        {
-            Destroy(gameObject, 1.0f);
-        }
 
-    }
     IEnumerator ReRoll()
     {
         yield return new WaitForSeconds(1.0f);
         spriteRenderer.sprite = null;
         transform.SetParent(deck.transform);
         transform.position = deck.position;
-        collider2D.isTrigger = true;
+    }
+
+    public void destroy()
+    {
+        if (Mark[dicenum] != (int)DiceType.Reroll)
+        {
+            Destroy(gameObject, 1.0f);
+        }
     }
     public SpriteRenderer GetSpriteRenderer() { return spriteRenderer; }
 }
