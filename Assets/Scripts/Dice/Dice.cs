@@ -33,11 +33,23 @@ public class Dice : MonoBehaviour
     public int dicenum;
     private SpriteRenderer spriteRenderer;
 
+    private void Awake()
+    {
+        List<Dictionary<string, object>> csvData = CSVReader.Read("Dice");
+        Mark = new int[6];
+        #region CSV Data
+        DiceID = (int)csvData[IDNUM]["DiceID"];
+        Rank = (int)csvData[IDNUM]["Rank"];
+        Mark[0] = (int)csvData[IDNUM]["Mark1"];
+        Mark[1] = (int)csvData[IDNUM]["Mark2"];
+        Mark[2] = (int)csvData[IDNUM]["Mark3"];
+        Mark[3] = (int)csvData[IDNUM]["Mark4"];
+        Mark[4] = (int)csvData[IDNUM]["Mark5"];
+        Mark[5] = (int)csvData[IDNUM]["Mark6"];
+        #endregion
+    }
     public void Start()
     {
-        Mark = new int[6];
-        List<Dictionary<string, object>> csvData = CSVReader.Read("Dice");
-
         if (transform.parent != null && transform.parent.name == "Player01_Deck")
         {
             deck = GameObject.Find("Player01_Deck").transform;
@@ -58,26 +70,18 @@ public class Dice : MonoBehaviour
         }
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        #region CSV Data
-        DiceID = (int)csvData[IDNUM]["DiceID"];
-        Rank = (int)csvData[IDNUM]["Rank"];
-        Mark[0] = (int)csvData[IDNUM]["Mark1"];
-        Mark[1] = (int)csvData[IDNUM]["Mark2"];
-        Mark[2] = (int)csvData[IDNUM]["Mark3"];
-        Mark[3] = (int)csvData[IDNUM]["Mark4"];
-        Mark[4] = (int)csvData[IDNUM]["Mark5"];
-        Mark[5] = (int)csvData[IDNUM]["Mark6"];
-        #endregion
+
     }
     public void Roll()
     {
         dicenum = Random.Range(0, 6);
-        Debug.Log(diceside[Mark[0]]);
-        //spriteRenderer.sprite = diceside[Mark[0]];
-        //Effect(dicenum);
+        spriteRenderer.sprite = diceside[0];
+        Effect(dicenum);
+        destroy();
     }
     void Effect(int dicenum)
     {
+
         if (Mark[dicenum] == (int)DiceType.Attack)
         {
             player.Attack();
@@ -96,8 +100,7 @@ public class Dice : MonoBehaviour
         else if (Mark[dicenum] == (int)DiceType.Reroll)
         {
             Debug.Log("Reroll");
-            //StartCoroutine(ReRoll());
-
+            StartCoroutine(ReRoll());
         }
     }
 

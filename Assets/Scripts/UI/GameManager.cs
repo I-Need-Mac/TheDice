@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         GameOver();
         playAction();
     }
+
     public void playAction()
     {
         if (Player01.ischoice == true && Player02.ischoice == true)
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour
             Player02.isRoll = false;
             Player01.isRest = false;
             Player02.isRest = false;
+            StartCoroutine(TurnOver());
         }
     }
     public void GameOver()
@@ -88,5 +90,11 @@ public class GameManager : MonoBehaviour
                  Player02_Vic_txt.text = "Defeat";
              }
          }
+    }
+    IEnumerator TurnOver()
+    {
+        yield return new WaitForSeconds(1.0f);
+        turn++;
+        Player01.Shield = 0; Player02.Shield =0;
     }
 }

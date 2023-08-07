@@ -78,9 +78,7 @@ public class Player : MonoBehaviour
                 for (int i = 0; i < Rolling_Count; i++)
                 {
                     dice = deck.diceList[i];
-                    Instantiate(dice,board);
-                    //deck.diceList[i].transform.SetParent(board);
-                    //deck.diceList[i].transform.localPosition = Vector3.zero;
+                    Instantiate(deck.diceList[i],board);
                     deck.diceList[i].Roll();
                 }
                 deck.diceList.RemoveRange(0, Rolling_Count);

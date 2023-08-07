@@ -17,16 +17,18 @@ public class Deck : MonoBehaviour
     [SerializeField]
     private DeckData deckdata;
 
+    private List<Dice> DeckList = new List<Dice>();
     private Dice dice;
     private void Start()
     {
-        diceList = deckdata.diceList;
-        //for (int i = 0; i < diceList.Count; i++)
-        //{
-        //    dice = diceList[i];
-        //    Instantiate(dice, deck_position);
-
-        //}
+        DeckList = deckdata.diceList;
+        //diceList.Clear();
+        // DeckData에 미리 정의된 주사위들을 추가합니다.
+        for (int i = 0; i < 15; i++)
+        {
+            dice = Instantiate(DeckList[i], deck_position);
+            diceList.Add(dice);
+        }
     }
     private void Shuffle()
     {
