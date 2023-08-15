@@ -53,27 +53,22 @@ public class GameManager : MonoBehaviour
         Player01_Shield_txt.text = $"Shield : {Player01.Shield}";
         Player02_Shield_txt.text = $"Shield : {Player02.Shield}";
         GameOver();
-        playAction();
+        if(Player01.ischoice==true && Player02.ischoice == true)
+        {
+            StartCoroutine(PlayerAction());
+        }
     }
 
-    public void playAction()
+    IEnumerator PlayerAction()
     {
-        if (Player01.ischoice == true && Player02.ischoice == true)
-        {
-            Player01.PlayerAction();
-            Player02.PlayerAction();
-            Player01.DisableAllButtons(true);
-            Player02.DisableAllButtons(true);
-            Player01.ischoice = false;
-            Player02.ischoice = false;
-            Player01.isPower = false;
-            Player02.isPower = false;
-            Player01.isRoll = false;
-            Player02.isRoll = false;
-            Player01.isRest = false;
-            Player02.isRest = false;
-            StartCoroutine(TurnOver());
-        }
+        Player01.PlayerAction();
+        Player02.PlayerAction();
+        Player01.DisableAllButtons(true);
+        Player02.DisableAllButtons(true);
+        Player01.ischoice = Player01.isPower = Player01.isRoll = Player01.isRest = false;
+        Player02.ischoice = Player02.isPower = Player02.isRoll = Player02.isRest = false;
+        yield return new WaitForSeconds(1.0f);
+        TurnOver();
     }
     public void GameOver()
     {
@@ -91,9 +86,10 @@ public class GameManager : MonoBehaviour
              }
          }
     }
-    IEnumerator TurnOver()
+
+
+    public void TurnOver()
     {
-        yield return new WaitForSeconds(1.0f);
         turn++;
         Player01.Shield = 0; Player02.Shield =0;
     }

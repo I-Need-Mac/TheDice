@@ -75,7 +75,8 @@ public class Dice : MonoBehaviour
     public void Roll()
     {
         dicenum = Random.Range(0, 6);
-        spriteRenderer.sprite = diceside[0];
+        Debug.Log(Mark[dicenum]);
+        spriteRenderer.sprite = diceside[Mark[dicenum]];
         Effect(dicenum);
         destroy();
     }
@@ -85,21 +86,21 @@ public class Dice : MonoBehaviour
         if (Mark[dicenum] == (int)DiceType.Attack)
         {
             player.Attack();
-            Debug.Log("Attack");
+            //Debug.Log("Attack");
         }
         else if (Mark[dicenum] == (int)DiceType.Shield)
         {
             player.Shield_UP();
-            Debug.Log("Shield UP");
+            //Debug.Log("Shield UP");
         }
         else if (Mark[dicenum] == (int)DiceType.Bomb)
         {
             player.SelfDamaged();
-            Debug.Log("Bomb");
+            //Debug.Log("Bomb");
         }
         else if (Mark[dicenum] == (int)DiceType.Reroll)
         {
-            Debug.Log("Reroll");
+            //Debug.Log("Reroll"); 
             StartCoroutine(ReRoll());
         }
     }

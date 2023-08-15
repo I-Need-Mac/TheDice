@@ -7,7 +7,6 @@ public class Inventory : MonoBehaviour
     Slot slot;
     public List<Slot> slotList = new List<Slot>();
     public DeckPanel deckpanel;
-
     private void Start()
     {
         for(int i=0; i < gameObject.transform.childCount; i++)
@@ -33,24 +32,19 @@ public class Inventory : MonoBehaviour
                 slot = hit.transform.GetComponent<Slot>();
                 if (slot.dice != null)
                 {
-                    deckpanel.AddDice(slot.dice);
                     if(deckpanel.deckdata.diceList.Count<15)
                     {
-                        deckpanel.deckdata.diceList.Add(slot.dice);
+                        deckpanel.AddDice(slot.dice);
+                        for (int i = 0; i<15; i++)
+                        {
+                            if (deckpanel.deckSlots[i].dice==null)
+                            {
+                                deckpanel.deckSlots[i].dice = slot.dice;
+                                deckpanel.deckSlots[i].diceIcon.sprite = slot.dice.diceIcon;
+                                break;
+                            }
+                        }
                     }
-                    
-                   //for (int i=0; i<deckpanel.Slot.Length; i++)
-                   // {
-                        //if (deckpanel.Slot[i].childCount==0)
-                        //{
-                        //    slot.dice.transform.SetParent(deckpanel.Slot[i]);
-                         //   break;
-                        //}
-                   // }
-                   // }
-                    slot.dice.transform.localPosition = Vector3.zero;
-                    
-                    slot.dice.transform.localScale = Vector3.one;
                 }
             }
         }

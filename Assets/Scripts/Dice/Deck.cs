@@ -22,8 +22,6 @@ public class Deck : MonoBehaviour
     private void Start()
     {
         DeckList = deckdata.diceList;
-        //diceList.Clear();
-        // DeckData에 미리 정의된 주사위들을 추가합니다.
         for (int i = 0; i < 15; i++)
         {
             dice = Instantiate(DeckList[i], deck_position);
