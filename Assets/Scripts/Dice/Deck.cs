@@ -27,6 +27,7 @@ public class Deck : MonoBehaviour
             dice = Instantiate(DeckList[i], deck_position);
             diceList.Add(dice);
         }
+        Shuffle();
     }
     private void Shuffle()
     {

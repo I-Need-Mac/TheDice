@@ -55,35 +55,34 @@ public class GameManager : MonoBehaviour
         GameOver();
         if(Player01.ischoice==true && Player02.ischoice == true)
         {
-            StartCoroutine(PlayerAction());
+            Player01.PlayerAction();
+            Player02.PlayerAction();
+            Player01.ischoice= false;
+            Player02.ischoice= false;
+            Player01.DisableAllButtons(true);
+            Player02.DisableAllButtons(true);
+            Invoke("TurnOver", 1.0f);
         }
     }
 
-    IEnumerator PlayerAction()
-    {
-        Player01.PlayerAction();
-        Player02.PlayerAction();
-        Player01.DisableAllButtons(true);
-        Player02.DisableAllButtons(true);
-        Player01.ischoice = Player01.isPower = Player01.isRoll = Player01.isRest = false;
-        Player02.ischoice = Player02.isPower = Player02.isRoll = Player02.isRest = false;
-        yield return new WaitForSeconds(1.0f);
-        TurnOver();
-    }
+
     public void GameOver()
     {
          if(Player01.Hp<=0||Player02.Hp<=0||turn>=15)
          {
              if (Player01.Hp < Player02.Hp)
              {
-                 Player02_Vic_txt.text = "Victory";
-                 Player01_Vic_txt.text = "Defeat";
+                Player02_Vic_txt.text = "Victory";
+                Player01_Vic_txt.text = "Defeat";
+                Player02.Hp = 0;
              }
              else if (Player02.Hp < Player01.Hp)
              {
-                 Player01_Vic_txt.text = "Victory";
-                 Player02_Vic_txt.text = "Defeat";
+                Player01_Vic_txt.text = "Victory";
+                Player02_Vic_txt.text = "Defeat";
+                Player01.Hp = 0;
              }
+
          }
     }
 

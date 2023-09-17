@@ -10,12 +10,12 @@ public class Player : MonoBehaviour
     public int Shield = 0;
     public int Damage = 1;
     
-    private bool Rest;
-    private bool Power;
+    bool Rest=false;
+    bool Power=false;
 
-    public bool isRoll=false;
-    public bool isRest=false;
-    public bool isPower=false;
+    public bool ChoiceRoll=false;
+    public bool ChoiceRest=false;
+    public bool ChoicePower=false;
     public bool ischoice=false;
 
     private int Rolling_Count;
@@ -44,53 +44,42 @@ public class Player : MonoBehaviour
     {
         DisableAllButtons(false);
         ischoice = true;
-        isRoll= true;
+        ChoiceRoll= true;
         
     }
     public void PowerRoll()
     {
         DisableAllButtons(false);
         ischoice = true;
-        isPower= true;
+        ChoicePower= true;
     }
     public void RestTurn()
     {
         DisableAllButtons(false);
         ischoice = true;
-        isRest = true;
+        ChoiceRest = true;
     }
 
 
     public void PlayerAction()
     {
-        if(isRoll == true)
+        if(ChoiceRoll == true)
         {
-            if (Power == true)
+            for (int i = 0; i < Rolling_Count; i++)
             {
-                Debug.Log("지난턴에 파워롤을 했습니다");
+                deck.diceList[i].transform.SetParent(board.transform);
+                deck.diceList[i].transform.localPosition = Vector3.zero;
+                deck.diceList[i].Roll();
+                dice = deck.diceList[i];
+                if (dice.Mark[dice.dicenum] == (int)DiceType.Reroll)
+                {
+                    deck.diceList.Add(dice);
+                }
             }
-            else
-            {
-                if (deck.diceList.Count <= Rolling_Count)
-                {
-                    Rolling_Count = deck.diceList.Count;
-                }
-                for (int i = 0; i < Rolling_Count; i++)
-                {
-                    dice = deck.diceList[i];
-                    Instantiate(deck.diceList[i],board);
-                    deck.diceList[i].Roll();
-                }
-                deck.diceList.RemoveRange(0, Rolling_Count);
-                if (Rest == true)
-                {
-                    Rest = false;
-                    Rolling_Count--;
-                }
-                Power = false;
-            }
+            deck.diceList.RemoveRange(0, Rolling_Count);
+            ChoiceRoll = false;
         }
-        if(isPower == true)
+        if(ChoicePower == true)
         {
             ++Rolling_Count;
             if (Power == false)
@@ -101,22 +90,22 @@ public class Player : MonoBehaviour
                     deck.diceList[i].transform.localPosition = Vector3.zero;
                     deck.diceList[i].Roll();
                     dice = deck.diceList[i];
-                    Power = true;
                     if (dice.Mark[dice.dicenum] == (int)DiceType.Reroll)
                     {
                         deck.diceList.Add(dice);
                     }
                 }
-                Debug.Log("남은 덱" + deck.diceList.Count);
                 deck.diceList.RemoveRange(0, Rolling_Count);
+                Power = true;
             }
             else if (Power == true)
             {
                 Debug.Log("지난 턴에 파워롤을 이미 했습니다!");
             }
             Rolling_Count--;
+            ChoicePower= false;
         }
-        if(isRest == true)
+        if(ChoiceRest == true)
         {
             if (Rest == true)
             {
@@ -127,7 +116,9 @@ public class Player : MonoBehaviour
                 Rest = true;
                 Rolling_Count++;
             }
+            ChoiceRest=false;
         }
+        ischoice= false;
     }
 
     public void Attack()
@@ -169,21 +160,15 @@ public class Player : MonoBehaviour
     {
         if(gameObject.name=="Player01")
         {
-            // 씬 내에 있는 "Deck" 태그를 가진 게임 오브젝트를 찾아서 할당
             GameObject deckObject = GameObject.FindWithTag("Player01_Deck");
 
             if (deckObject != null)
             {
                 deck = deckObject.GetComponent<Deck>();
             }
-            else
-            {
-                Debug.LogError("Could not find 'Deck' GameObject in the scene.");
-            }
         }
         if (gameObject.name == "Player02")
         {
-            // 씬 내에 있는 "Deck" 태그를 가진 게임 오브젝트를 찾아서 할당
             GameObject deckObject = GameObject.FindWithTag("Player02_Deck");
 
             if (deckObject != null)

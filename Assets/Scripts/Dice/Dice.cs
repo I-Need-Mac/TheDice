@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
 enum DiceType
 {
     Attack=1,
@@ -55,7 +54,7 @@ public class Dice : MonoBehaviour
             deck = GameObject.Find("Player01_Deck").transform;
             GameObject playerObject = GameObject.Find("Player01");
             if (playerObject != null)
-            {
+            {               
                 player = playerObject.GetComponent<Player>();
             }
         }
@@ -68,51 +67,44 @@ public class Dice : MonoBehaviour
                 player = playerObject.GetComponent<Player>();
             }
         }
-
         spriteRenderer = GetComponent<SpriteRenderer>();
-
     }
     public void Roll()
     {
         dicenum = Random.Range(0, 6);
-        Debug.Log(Mark[dicenum]);
-        spriteRenderer.sprite = diceside[Mark[dicenum]];
+        spriteRenderer.sprite = diceside[Mark[dicenum]-1];
         Effect(dicenum);
         destroy();
     }
     void Effect(int dicenum)
     {
-
         if (Mark[dicenum] == (int)DiceType.Attack)
         {
             player.Attack();
-            //Debug.Log("Attack");
+            Debug.Log("Attack");
         }
         else if (Mark[dicenum] == (int)DiceType.Shield)
         {
             player.Shield_UP();
-            //Debug.Log("Shield UP");
+            Debug.Log("Shield UP");
         }
         else if (Mark[dicenum] == (int)DiceType.Bomb)
         {
             player.SelfDamaged();
-            //Debug.Log("Bomb");
+            Debug.Log("Bomb");
         }
         else if (Mark[dicenum] == (int)DiceType.Reroll)
         {
-            //Debug.Log("Reroll"); 
-            StartCoroutine(ReRoll());
+            Invoke("ReRoll", 1.0f);
+            Debug.Log("Reroll");
         }
     }
-
-    IEnumerator ReRoll()
+    void ReRoll()
     {
-        yield return new WaitForSeconds(1.0f);
         spriteRenderer.sprite = null;
         transform.SetParent(deck.transform);
         transform.position = deck.position;
     }
-
     public void destroy()
     {
         if (Mark[dicenum] != (int)DiceType.Reroll)
